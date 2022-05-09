@@ -1,0 +1,55 @@
+name: pypi_package_upload
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  python-build-push:
+    name: Push to Pypi.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setting up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+          architecture: "x64"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Installing wheel package
+        run: pip install wheel twine
+
+      - name: Build Package wheels
+        run: python setup.py sdist bdist_wheel
+
+      - name: Publish package to Codeartifact using twine
+        run: twine upload dist/*
+
+      - name: Build Success Slack Notification
+        uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }}
+          token: ${{ secrets.TOKEN }}
+          notification_title: "*Build Succeeded.*"
+          message_format: "{emoji} Workflow: *{workflow}* \t Repo:<{repo_url}|{repo}>\n Author:${{ github.actor }} \t Ref:${{ github.ref }}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>"
+          notify_when: "success"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Build Failure Slack Notification
+        uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }}
+          token: ${{ secrets.TOKEN }}
+          notification_title: "*Build Failed.*"
+          message_format: "{emoji} Workflow: *{workflow}* \t Repo:<{repo_url}|{repo}>\n Author:${{ github.actor }} \t Ref:${{ github.ref }}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>"
+          notify_when: "failure"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
