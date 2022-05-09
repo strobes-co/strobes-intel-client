@@ -20,7 +20,6 @@ with open("README.md") as file:
         author="Akhil Reni",
         version=__version__,
         author_email="akhil@wesecureapp.com",
-        url="https://strobes.co/",
         packages=find_packages(
             exclude=('tests')),
         package_data={
