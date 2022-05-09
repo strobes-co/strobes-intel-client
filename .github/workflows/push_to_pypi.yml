@@ -26,7 +26,7 @@ jobs:
         run: python setup.py sdist bdist_wheel
 
       - name: Publish package to Codeartifact using twine
-        run: twine upload dist/*
+        run: twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} dist/*
 
       - name: Build Success Slack Notification
         uses: ravsamhq/notify-slack-action@v1
