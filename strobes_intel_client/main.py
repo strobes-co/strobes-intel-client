@@ -20,8 +20,7 @@ def client(cve: str) -> CVE:
 
 def main():
     arguments, unknown = parse_args()
-    cve = arguments.cve
-    if cve:
+    if cve := arguments.cve:
         print(client(cve).json(indent=4))
 
 
