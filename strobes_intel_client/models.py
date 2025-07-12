@@ -87,6 +87,7 @@ class WASC(BaseModel):
 class Taxonomy(BaseModel):
     cwe: List[CWE] = Field(default=[])
     predicted_cwe: List[CWE] = Field(default=[])
+    owasp_2021: List[OWASP] = Field(default=[])
     owasp_2007: List[OWASP] = Field(default=[])
     owasp_2004: List[OWASP] = Field(default=[])
     nist: List[NIST] = Field(default=[])
@@ -104,11 +105,14 @@ class Advisory(BaseModel):
     cvss_v2_vector: Optional[str] = Field(default=None)
     cvss_v3_vector: Optional[str] = Field(default=None)
     cpe: List[str] = Field(default=[])
+    remediation: Optional[str] = Field(default=None)
+    impact: Optional[str] = Field(default=None)
     exploitability_score_v2: Optional[float] = Field(default=None)
     impact_score_v2: Optional[float] = Field(default=None)
     exploitability_score_v3: Optional[float] = Field(default=None)
     impact_score_v3: Optional[float] = Field(default=None)
     references: List[Reference] = Field(default=[])
+    assigner: Optional[str] = Field(default=None)
 
 
 class Twitter(BaseModel):
@@ -118,8 +122,13 @@ class Twitter(BaseModel):
 
 
 class CVE(BaseModel):
-    cve: str = Field(primary_field=True)
+    id: str = Field(alias="_id", primary_field=True)
+    sources: List[str] = Field(default=[])
     advisories: List[Advisory] = Field(default=[])
+    cvss_v2: Optional[float] = Field(default=None)
+    cvss_v3: Optional[float] = Field(default=None)
+    cvss_v2_vector: Optional[str] = Field(default=None)
+    cvss_v3_vector: Optional[str] = Field(default=None)
     predicted_cvss_v2: Optional[float] = Field(default=None)
     predicted_cvss_v3: Optional[float] = Field(default=None)
     exploits: Exploits = Field(default=Exploits())
@@ -130,4 +139,11 @@ class CVE(BaseModel):
     taxonomy: Taxonomy = Field(default=Taxonomy())
     twitter: Twitter = Field(default=Twitter())
     seen_wild: bool = Field(default=False)
-    priority_score: int = Field(default=None)
+    priority_score: Optional[int] = Field(default=None)
+    published: Optional[str] = Field(default=None)
+    last_modified: Optional[str] = Field(default=None)
+    trend: Optional[int] = Field(default=None)
+    likes: int = Field(default=0)
+    dislikes: int = Field(default=0)
+    cisa_due_date: Optional[str] = Field(default=None)
+    epss_score: Optional[float] = Field(default=None)
